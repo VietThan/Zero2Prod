@@ -7,7 +7,22 @@ async fn greet(req: HttpRequest) -> impl Responder {
     format!("Hello {}!", &name)
 }
 
-async fn health_check() -> impl Responder {
+// We were returning `impl Responder` at the very beginning.
+// We are now spelling out the type explicitly given that we have
+// become more familiar with `actix-web`.
+// There is no performance difference! Just a stylistic choice :)
+async fn health_check() -> HttpResponse {
+    HttpResponse::Ok().finish()
+}
+
+#[derive(serde::Deserialize)]
+struct FormData {
+    email: String,
+    name: String,
+}
+
+// Let's start simple: we always return a 200 OK
+async fn subscribe(_form: web::Form<FormData>) -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
@@ -15,18 +30,11 @@ async fn health_check() -> impl Responder {
 // We return `Server` on the happy path and we dropped the `async` keyword
 // We have no .await call, so it is not needed anymore.
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
-    // HttpServer::new(|| {
-    //     App::new()
-    //         .route("/", web::get().to(greet))
-    //         .route("/health_check", web::get().to(health_check))
-    // })
-    // .bind("127.0.0.1:8000")?
-    // .run()
-    // .await
     let server = HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(greet))
             .route("/health_check", web::get().to(health_check))
+            .route("/subscriptions", web::post().to(subscribe))
     })
     .listen(listener)?
     .run();
