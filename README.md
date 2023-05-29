@@ -9,6 +9,11 @@ Run
 $ cargo run
 ```
 
+Run at different log levels (default `info`)
+```shell
+$ RUST_LOG=trace cargo run
+```
+
 
 ## Start the DB
 ```shell
