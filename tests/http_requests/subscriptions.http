@@ -1,0 +1,5 @@
+POST http://127.0.0.1:8000/subscriptions HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+email="ursulale_guin@gmail.com"
+&name="le guin"
